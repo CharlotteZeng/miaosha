@@ -26,6 +26,10 @@ public class SimpleController {
         model.addAttribute("name","zhc");
         return "hello";
     }
+    @RequestMapping("/toLogin")
+    public String toLogin(){
+        return "login";
+    }
     @RequestMapping("/result")
     @ResponseBody
     public Result<String> hello(Model model){
@@ -34,7 +38,7 @@ public class SimpleController {
     @RequestMapping("/redis/get")
     @ResponseBody
     public Result<User> redisGet(Model model){
-        User name = redisService.get(UserKey.getById,"1", User.class);
+        User name = redisService.get(UserKey.getById,"name", User.class);
         return Result.success("result success!  "+name);
     }
     @RequestMapping("/redis/set")
