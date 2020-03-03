@@ -17,19 +17,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-@RequestMapping("/demo")
-public class SimpleController {
+@RequestMapping("/login")
+public class LoginController {
 
     @Autowired
     UserService userService;
     @Autowired
     RedisService redisService;
-    private static Logger logger = LoggerFactory.getLogger(SimpleController.class);
-    @RequestMapping("/thymeleaf")
-    public String thymeleaf(Model model){
-        model.addAttribute("name","zhc");
-        return "hello";
-    }
+    private static Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     @RequestMapping("/toLogin")
     public String toLogin(){
         return "login";
@@ -39,6 +35,10 @@ public class SimpleController {
         logger.info("登陆开始。。。。。。");
         logger.info("登陆参数："+loginVo.toString());
         logger.info("登陆结束。。。。。。");
+        String passwordInput = loginVo.getPassword();
+        if (passwordInput.isEmpty()){
+            
+        }
         return "login";
     }
     @RequestMapping("/result")
@@ -52,19 +52,7 @@ public class SimpleController {
         User name = redisService.get(UserKey.getById,"name", User.class);
         return Result.success("result success!  "+name);
     }
-    @RequestMapping("/redis/set")
-    @ResponseBody
-    public Result<String> redisSet(Model model){
-        User user = new User();
-        user.setId(1);
-        user.setName("new name");
 
-        boolean set = redisService.set(UserKey.getById,"1", user);
-        if (set)
-            return Result.success("result success!  ");
-        else
-            return Result.error(CodeMsg.SERVER_ERROR);
-    }
 
     @RequestMapping("/getUserById")
     @ResponseBody
