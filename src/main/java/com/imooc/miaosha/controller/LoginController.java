@@ -18,6 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
+
 
 @Controller
 @RequestMapping("/login")
@@ -38,11 +40,11 @@ public class LoginController {
     }
     @ResponseBody
     @RequestMapping("/doLogin")
-    public Result<Object> login(LoginVo loginVo){
+    public Result<Object> login(@Valid LoginVo loginVo){
         logger.info("登陆开始。。。。。。");
         logger.info("登陆参数："+loginVo.toString());
         logger.info("登陆结束。。。。。。");
-        String passwordInput = loginVo.getPassword();
+       /* String passwordInput = loginVo.getPassword();
         String mobile = loginVo.getMobile();
         if (StringUtils.isEmpty(passwordInput)){
             return Result.error(CodeMsg.PASSWORD_EMPTY);
@@ -52,7 +54,7 @@ public class LoginController {
         }
         if (!ValidatorUtil.isMobile(mobile)){
             return Result.error(CodeMsg.MOBILE_ERROR);
-        }
+        }*/
         CodeMsg cm = miaoshaUserService.login(loginVo);
         if (cm.getCode()==0){
             return Result.success(cm.getMsg());
