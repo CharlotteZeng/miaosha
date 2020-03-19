@@ -15,6 +15,7 @@ import java.util.List;
 @ControllerAdvice
 @ResponseBody
 public class GlobalExceptionHandler {
+    //不加注解 异常无法拦截到
     @ExceptionHandler(value = Exception.class)
     public Result<String> exceptionHandler(HttpServletRequest request,Exception e){
         if (e instanceof BindException){
