@@ -24,6 +24,10 @@ public class GlobalExceptionHandler {
             ObjectError objectError = errors.get(0);
             String args = objectError.getDefaultMessage();
             return Result.error(CodeMsg.BIND_ERROR.fillArgs(args));
+        }else  if (e instanceof GlobalException){
+            CodeMsg cm = ((GlobalException) e).getCm();
+
+            return Result.error(cm);
         }else {
             return Result.error(CodeMsg.SERVER_ERROR);
         }

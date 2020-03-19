@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 
@@ -38,7 +39,7 @@ public class LoginController {
     }
     @ResponseBody
     @RequestMapping("/doLogin")
-    public Result<Object> login(@Valid LoginVo loginVo){
+    public Result<Object> login(HttpServletResponse response,@Valid LoginVo loginVo){
         logger.info("登陆开始。。。。。。");
         logger.info("登陆参数："+loginVo.toString());
         logger.info("登陆结束。。。。。。");
@@ -53,41 +54,8 @@ public class LoginController {
         if (!ValidatorUtil.isMobile(mobile)){
             return Result.error(CodeMsg.MOBILE_ERROR);
         }*/
-        CodeMsg cm = miaoshaUserService.login(loginVo);
-        if (cm.getCode()==0){
-            return Result.success(cm.getMsg());
-        }else{
-            return Result.error(cm);
-        }
-    }
-    @RequestMapping("/result")
-    @ResponseBody
-    public Result<String> hello(Model model){
-        return Result.success("result success");
-    }
-    @RequestMapping("/redis/get")
-    @ResponseBody
-    public Result<User> redisGet(Model model){
-        User name = redisService.get(UserKey.getById,"name", User.class);
-        return Result.success("result success!  "+name);
+        miaoshaUserService.login(response,loginVo);
+        return Result.success(true);
     }
 
-
-    @RequestMapping("/getUserById")
-    @ResponseBody
-    public Result<User> getUserById() {
-        User user = userService.getById(1);
-        return Result.success(user);
-    }
-
-    /**
-     * 事务测试
-     * @return
-     */
-    @RequestMapping("/tx")
-    @ResponseBody
-    public Result<String> dbtx() {
-        userService.tx();
-        return Result.success("success");
-    }
 }
