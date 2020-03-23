@@ -39,31 +39,36 @@ public class MiaoshaUserService {
         //form表单提交已经进行过一次md5的密码
         String formPass = loginVo.getPassword();
         String mobile = loginVo.getMobile();
-        MiaoshaUser miaoshaoUser = getByid(Long.parseLong(mobile));
-        if (null == miaoshaoUser){
+        MiaoshaUser miaoshaUser = getByid(Long.parseLong(mobile));
+        if (null == miaoshaUser){
             throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
         }
-        String dbPass= miaoshaoUser.getPassword();
-        String saltDB = miaoshaoUser.getSalt();
+        String dbPass= miaoshaUser.getPassword();
+        String saltDB = miaoshaUser.getSalt();
         String formPassToDBPass = MD5Util.formPassToDBPass(formPass, saltDB);
         if (!dbPass.equals(formPassToDBPass)){
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
         //生成Cookie
-        String token = UUIDUtil.getUUID();
-        redisService.set(MiaoshaUserKey.token,token,miaoshaoUser);
-        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN,token);
-        cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        addCookie(response,miaoshaUser);
         return true;
     }
 
-    public MiaoshaUser getByToken(String token) {
+    public MiaoshaUser getByToken(HttpServletResponse response,String token) {
         if (StringUtils.isEmpty(token)) {
             return null;
         }
         MiaoshaUser user = redisService.get(MiaoshaUserKey.token, token, MiaoshaUser.class);
+        //延长有效期
+        addCookie(response,user);
         return user;
+    }
+    private void addCookie(HttpServletResponse response,MiaoshaUser miaoshaUser){
+        String token = UUIDUtil.getUUID();
+        redisService.set(MiaoshaUserKey.token,token,miaoshaUser);
+        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN,token);
+        cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }
