@@ -18,6 +18,7 @@ public class GlobalExceptionHandler {
     //不加注解 异常无法拦截到
     @ExceptionHandler(value = Exception.class)
     public Result<String> exceptionHandler(HttpServletRequest request,Exception e){
+        e.printStackTrace();
         if (e instanceof BindException){
             BindException ex = (BindException) e;
             List<ObjectError> errors = ex.getAllErrors();
